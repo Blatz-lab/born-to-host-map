@@ -11,7 +11,7 @@ const palaisFestivals = { lat: 43.5511, lng: 7.0178 };
 const agenceBornToHost = '21 rue félix faure 06400 Cannes';
 
 // URL de ton Google Sheets publié en CSV
-const SHEETS_URL = ''htps://docs.google.com/spreadsheets/d/e/2PACX-1vSHa6Slmk1S7RaU5zgzphOqTv_YOuLaA0muWlPkJEe8BBZNQLa46jVjpWm8OxDvBPRXTXa8D6c3vYhq/pub?gid=0&single=true&output=csv';
+const SHEETS_URL ='htps://docs.google.com/spreadsheets/d/e/2PACX-1vSHa6Slmk1S7RaU5zgzphOqTv_YOuLaA0muWlPkJEe8BBZNQLa46jVjpWm8OxDvBPRXTXa8D6c3vYhq/pub?gid=0&single=true&output=csv';
 
 // Initialisation de la carte
 window.initMap = function() {
