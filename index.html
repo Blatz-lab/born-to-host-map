@@ -7,14 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const isSharedLink = urlParams.has('apparts');
-        
-        if (!isSharedLink && sessionStorage.getItem('authenticated') !== 'true') {
-            window.location.href = 'login.html';
-        }
-    </script>
     
     <div class="container">
         <h1>Générateur de Cartes - Born To Host</h1>
