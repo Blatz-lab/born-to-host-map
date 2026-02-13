@@ -1,0 +1,8 @@
+{
+  "name": "born-to-host-map",
+  "version": "1.0.0",
+  "description": "Short-term rental property mapping platform",
+  "dependencies": {
+    "node-fetch": "^3.0.0"
+  }
+}
