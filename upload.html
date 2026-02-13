@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Devis - Born To Host</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .upload-container {
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .logo-text .born { color: #B8D62E; }
+        .logo-text .to { color: #888; }
+        .logo-text .host { color: #1a1a1a; }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .upload-zone {
+            border: 3px dashed #B8D62E;
+            border-radius: 15px;
+            padding: 60px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .upload-zone:hover {
+            background: #f0f0f0;
+            border-color: #9AB82A;
+            transform: scale(1.02);
+        }
+        
+        .upload-zone.dragover {
+            background: #B8D62E22;
+            border-color: #B8D62E;
+            transform: scale(1.05);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #B8D62E;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #B8D62E;
+        }
+
+        .results h3 {
+            color: #2d8e47;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .reference-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .reference-tag {
+            background: linear-gradient(135deg, #B8D62E 0%, #9AB82A 100%);
+            color: #1a1a1a;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 3px 10px rgba(184, 214, 46, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-copy {
+            background: #34a853;
+            color: white;
+        }
+
+        .btn-map {
+            background: #B8D62E;
+            color: #1a1a1a;
+        }
+
+        .btn-reset {
+            width: 100%;
+            background: white;
+            color: #666;
+            border: 2px solid #ddd;
+        }
+
+        .error {
+            display: none;
+            padding: 15px;
+            background: #fee;
+            border: 2px solid #f88;
+            border-radius: 10px;
+            color: #c33;
+            margin-top: 20px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <div class="header">
+            <div class="logo-text">
+                <span class="born">BORN</span><span class="to">TO</span><span class="host">HOST</span>
+            </div>
+            <h1>📄 Extraire les références d'un devis</h1>
+            <p class="subtitle">Glissez-déposez votre devis pour extraire automatiquement les références d'appartements</p>
+        </div>
+        
+        <div class="upload-zone" id="uploadZone">
+            <div class="upload-icon">📤</div>
+            <p style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">Cliquez ou glissez votre fichier ici</p>
+            <p style="color: #999; font-size: 14px;">Formats acceptés : PDF, PNG, JPG (Max 10 MB)</p>
+            <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" style="display: none;">
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: #666; font-size: 16px;">🤖 Analyse du document en cours...</p>
+            <p style="color: #999; font-size: 14px; margin-top: 10px;">Cela peut prendre quelques secondes</p>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="results" id="results">
+            <h3>✅ Références trouvées :</h3>
+            <div class="reference-list" id="referenceList"></div>
+            
+            <div class="action-buttons">
+                <button onclick="copyReferences()" class="btn btn-copy">
+                    📋 Copier
+                </button>
+                <button onclick="openMapWithReferences()" class="btn btn-map">
+                    🗺️ Voir sur la carte
+                </button>
+            </div>
+            
+            <button onclick="reset()" class="btn btn-reset">
+                ↻ Analyser un autre document
+            </button>
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← Retour à la carte</a>
+        </div>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorDiv = document.getElementById('error');
+        const referenceList = document.getElementById('referenceList');
+        let extractedReferences = [];
+        
+        // Click pour upload
+        uploadZone.addEventListener('click', () => fileInput.click());
+        
+        // Drag & drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFile(file);
+        });
+        
+        async function handleFile(file) {
+            if (!file) return;
+            
+            errorDiv.style.display = 'none';
+            
+            // Vérifier la taille
+            if (file.size > 10 * 1024 * 1024) {
+                showError('Le fichier est trop volumineux (max 10 MB)');
+                return;
+            }
+
+            // Vérifier le type
+            const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                showError('Format non supporté. Utilisez PDF, PNG ou JPG.');
+                return;
+            }
+            
+            // Afficher le loading
+            uploadZone.style.display = 'none';
+            loading.style.display = 'block';
+            
+            try {
+                // Convertir en base64
+                const base64 = await fileToBase64(file);
+                
+                // Envoyer à la fonction Netlify
+                const response = await fetch('/.netlify/functions/extract-references', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fileContent: base64,
+                        fileType: file.type
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Erreur lors de l\'analyse');
+                }
+                
+                extractedReferences = data.references || [];
+                
+                if (extractedReferences.length === 0) {
+                    showError('Aucune référence trouvée dans ce document. Vérifiez le format.');
+                    reset();
+                    return;
+                }
+                
+                // Afficher les résultats
+                displayResults(extractedReferences);
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur lors de l\'analyse du document : ' + error.message);
+                reset();
+            }
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    // Enlever le préfixe "data:image/png;base64,"
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        function displayResults(references) {
+            loading.style.display = 'none';
+            results.style.display = 'block';
+            
+            referenceList.innerHTML = '';
+            references.forEach(ref => {
+                const tag = document.createElement('div');
+                tag.className = 'reference-tag';
+                tag.textContent = ref;
+                referenceList.appendChild(tag);
+            });
+        }
+        
+        function showError(message) {
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function copyReferences() {
+            const text = extractedReferences.join(', ');
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copié !';
+                btn.style.background = '#2d8e47';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#34a853';
+                }, 2000);
+            });
+        }
+        
+        function openMapWithReferences() {
+            const refs = extractedReferences.join(',');
+            window.location.href = `index.html?apparts=${encodeURIComponent(refs)}`;
+        }
+        
+        function reset() {
+            uploadZone.style.display = 'block';
+            loading.style.display = 'none';
+            results.style.display = 'none';
+            errorDiv.style.display = 'none';
+            fileInput.value = '';
+            extractedReferences = [];
+        }
+    </script>
+</body>
+</html>

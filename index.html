@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Born To Host - Générateur de Cartes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSharedLink = urlParams.has('apparts');
+        
+        if (!isSharedLink && sessionStorage.getItem('authenticated') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    
+    <div class="container">
+        <h1>Générateur de Cartes - Born To Host</h1>
+        
+        <!-- NOUVEAU : Bouton pour extraire depuis un devis -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="upload.html" style="display: inline-block; padding: 12px 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s;">
+                🤖 Extraire depuis un devis
+            </a>
+        </div>
+        
+        <div class="input-section">
+            <label for="search">Rechercher des appartements par référence :</label>
+            <input type="text" id="search" placeholder="Ex: A2B22 ou tapez plusieurs références séparées par des virgules: A2B22, A1B15, A3B08">
+            <div class="button-group">
+                <button onclick="searchApartments()">Rechercher et afficher sur la carte</button>
+                <button onclick="generateShareLink()" class="share-button">Générer le lien de partage</button>
+                <button onclick="clearMap()">Effacer la carte</button>
+            </div>
+            
+            <div id="share-link-container" style="display: none;">
+                <div class="share-link-box">
+                    <p><strong>Lien de partage généré :</strong></p>
+                    <input type="text" id="share-link" readonly>
+                    <button onclick="copyShareLink()" class="copy-button">Copier le lien</button>
+                </div>
+            </div>
+            
+            <div id="selected-apartments"></div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwqDm55QJ7wcilSSTQ4tg2X0jQYGpJsco&callback=initMap" async defer><
